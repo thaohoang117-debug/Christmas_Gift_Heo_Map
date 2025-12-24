@@ -208,7 +208,7 @@
       background:white;
       display:block;
       transition: opacity 0.35s ease;
-      cursor:pointer; /* ✅ tap me */
+      cursor:pointer;
     }
     .card .cap{margin-top: 10px;font-size: 16px;font-weight: 800;color:#fff3cd;line-height: 1.4;}
 
@@ -323,6 +323,11 @@
 <body>
   <canvas id="snow"></canvas>
 
+  <!-- ✅ AUDIO -->
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="christmas-440431.mp3" type="audio/mpeg" />
+  </audio>
+
   <div id="santaSleigh" class="sleigh" aria-hidden="true">
     <img src="sleigh.png" alt="Santa Sleigh">
   </div>
@@ -330,6 +335,20 @@
   <div class="container">
     <div id="giftBox" class="box">🎁</div>
     <div id="hint" class="hint">🎄 Tap the mystery box 🎄</div>
+
+    <!-- ✅ MUSIC BUTTON -->
+    <button id="musicBtn" style="
+      margin-top:14px;
+      padding:10px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.25);
+      background:rgba(0,0,0,0.25);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+    ">
+      🔊 Music
+    </button>
 
     <div id="unlockUI" class="unlockUI">
       <div id="unlockText" class="unlockText">✨ A mystery is waiting...</div>
@@ -379,6 +398,30 @@
 
     const TOTAL_TAPS = 5;
     let tapCount = 0;
+
+    /* ✅ AUDIO CONTROL */
+    const bgMusic = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("musicBtn");
+    let musicStarted = false;
+
+    function startMusic() {
+      if (musicStarted) return;
+      musicStarted = true;
+      bgMusic.volume = 0.35;
+      bgMusic.play().catch(err => console.log("Audio blocked until interaction:", err));
+    }
+
+    musicBtn.addEventListener("click", () => {
+      startMusic();
+
+      if (bgMusic.paused) {
+        bgMusic.play();
+        musicBtn.textContent = "🔊 Music";
+      } else {
+        bgMusic.pause();
+        musicBtn.textContent = "🔇 Muted";
+      }
+    });
 
     const steps = [
       {
@@ -445,6 +488,9 @@
     tapImg.addEventListener("click", hideCard);
 
     function openGift() {
+      // ✅ start music on first interaction
+      startMusic();
+
       // ✅ If modal is open, box taps do nothing
       if(waitingForModalClose) return;
 
