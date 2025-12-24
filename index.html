@@ -8,8 +8,10 @@
   <style>
     body{
       margin:0;
-      height:100vh;
-      overflow:hidden;
+      min-height:100svh;                 /* ✅ stable viewport on iPhone */
+      height:auto;
+      overflow-x:hidden;
+      overflow-y:auto;                   /* ✅ scroll only if needed */
       background:radial-gradient(circle at top,#1c7c54,#0f3624);
       display:flex;
       justify-content:center;
@@ -19,36 +21,28 @@
       user-select:none;
       position:relative;
       transition: background 900ms ease-in-out;
+
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
-    canvas{
-      position:absolute;
-      inset:0;
-      z-index:1;
-      pointer-events:none;
-    }
+    body.locked{ overflow:hidden; }      /* ✅ lock scroll before tap */
 
-    /* ✅ FIX: Make the container truly centered and stable */
+    canvas{position:absolute;inset:0;z-index:1;pointer-events:none;}
+
+    /* ✅ FIXED CENTER LAYOUT */
     .container{
       position:relative;
       z-index:2;
       width:min(92vw,520px);
-      height:100vh;                 /* ✅ full height */
-      display:flex;                 /* ✅ flex column */
+      min-height:100svh;                 /* ✅ full viewport height */
+      display:flex;
       flex-direction:column;
-      justify-content:center;       /* ✅ center vertically */
-      align-items:center;           /* ✅ center horizontally */
+      justify-content:center;
+      align-items:center;
       text-align:center;
       padding: 22px 16px;
       box-sizing:border-box;
-    }
-
-    /* ✅ Keeps spacing consistent after tap */
-    #hint,
-    #unlockUI,
-    #tapCard{
-      width:100%;
-      max-width:420px;
     }
 
     /* ✅ FINAL BACKGROUND */
@@ -137,7 +131,6 @@
       position:relative;
       animation:float 2.4s ease-in-out infinite,pulseGlow 2.8s ease-in-out infinite;
       filter:drop-shadow(0 15px 25px rgba(0,0,0,.55));
-      margin: 0; /* ✅ remove accidental top shift */
     }
 
     .box::after{
@@ -165,7 +158,6 @@
         float 2.4s ease-in-out infinite,
         candleFlicker 0.16s infinite alternate;
     }
-
     @keyframes candleFlicker {
       from { filter: drop-shadow(0 18px 38px rgba(255, 160, 70, 0.35)); }
       to   { filter: drop-shadow(0 18px 58px rgba(255, 220, 160, 0.55)); }
@@ -181,10 +173,9 @@
     @keyframes w3{0%,100%{transform:scale(1.07) rotate(0)}25%{transform:scale(1.1) rotate(-5deg)}50%{transform:scale(1.1) rotate(5deg)}75%{transform:scale(1.09) rotate(-4deg)}}
     @keyframes w4{0%,100%{transform:scale(1.1) rotate(0)}20%{transform:scale(1.15) rotate(-10deg)}50%{transform:scale(1.15) rotate(10deg)}80%{transform:scale(1.12) rotate(-8deg)}}
 
-    /* ✅ Cleaner spacing below the box */
     .hint{
       font-size:17px;
-      margin-top: 12px;
+      margin-top:12px;
       opacity:.95;
       text-shadow:0 6px 14px rgba(0,0,0,.35);
     }
@@ -193,32 +184,27 @@
       margin-top:14px;
       display:none;
       animation:fadeInUp .5s ease forwards;
+      width:100%;
     }
+    .unlockText{font-size:18px;font-weight:900;color:#ffe9b3;text-shadow:0 8px 18px rgba(0,0,0,.35);}
+    .unlockTip{font-size:15px;margin-top:10px;opacity:.95;}
+    .trees{margin-top:10px;font-size:20px;letter-spacing:4px;opacity:0.95;text-shadow:0 6px 14px rgba(0,0,0,.25);}
 
-    .unlockText{
-      font-size:18px;
-      font-weight:900;
-      color:#ffe9b3;
-      text-shadow:0 8px 18px rgba(0,0,0,.35);
-    }
-
-    .unlockTip{
-      font-size:15px;
-      margin-top:10px;
-      opacity:.95;
-    }
-
-    .trees{
-      margin-top:10px;
-      font-size:20px;
-      letter-spacing:4px;
-      opacity:0.95;
-      text-shadow:0 6px 14px rgba(0,0,0,.25);
-    }
-
-    .card{
+    /* ======================================================
+       ✅ OVERLAY MODAL CARD (doesn't push layout down)
+    ====================================================== */
+    .cardOverlay{
+      position:fixed;
+      inset:0;
       display:none;
-      margin: 18px auto 0;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      padding: 16px;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(4px);
+    }
+    .card{
       width: min(92vw, 420px);
       background: rgba(255,255,255,0.14);
       border: 1px solid rgba(255,255,255,0.22);
@@ -226,9 +212,9 @@
       border-radius: 18px;
       box-shadow: 0 12px 25px rgba(0,0,0,0.35);
       backdrop-filter: blur(10px);
-      animation: fadeInUp .7s ease forwards;
+      animation: fadeInUp .5s ease forwards;
+      position:relative;
     }
-
     .card img{
       width: 100%;
       border-radius: 14px;
@@ -237,7 +223,6 @@
       display:block;
       transition: opacity 0.35s ease;
     }
-
     .card .cap{
       margin-top: 10px;
       font-size: 16px;
@@ -246,18 +231,27 @@
       line-height: 1.4;
     }
 
-    .bubble{
+    .closeBtn{
       position:absolute;
-      left:50%;
-      top:16%;
-      transform:translateX(-50%);
-      font-size:34px;
-      opacity:0;
-      animation:bubbleFloat 1s ease forwards;
-      pointer-events:none;
-      z-index:7;
+      top:10px;
+      right:10px;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      border:none;
+      background: rgba(0,0,0,0.35);
+      color:#fff;
+      font-size:20px;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
     }
 
+    .bubble{
+      position:absolute;left:50%;top:16%;transform:translateX(-50%);
+      font-size:34px;opacity:0;animation:bubbleFloat 1s ease forwards;
+      pointer-events:none;z-index:7;
+    }
     @keyframes bubbleFloat{
       0%{opacity:0;transform:translateX(-50%) translateY(12px) scale(.8)}
       40%{opacity:1;transform:translateX(-50%) translateY(-12px) scale(1.05)}
@@ -272,56 +266,22 @@
       margin:0 auto;
     }
 
-    .pants{
-      display:flex;
-      gap:20px;
-      justify-content:center;
-      margin-top:18px;
-      flex-wrap:wrap;
-    }
-
+    .pants{display:flex;gap:20px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
     .pants img{
-      width:150px;
-      border-radius:16px;
-      box-shadow:0 10px 18px rgba(0,0,0,.45);
-      background:white;
-      transform:scale(.98);
-      transition:transform .25s ease;
+      width:150px;border-radius:16px;box-shadow:0 10px 18px rgba(0,0,0,.45);
+      background:white;transform:scale(.98);transition:transform .25s ease;
     }
-
     .pants img:hover{transform:scale(1.05);}
 
-    .messageWrap{
-      margin-top:26px;
-      display:flex;
-      justify-content:center;
-    }
-
+    .messageWrap{margin-top:26px;display:flex;justify-content:center;}
     .message{
-      width:min(92vw,420px);
-      background:rgba(255,255,255,.14);
+      width:min(92vw,420px);background:rgba(255,255,255,.14);
       border:1px solid rgba(255,255,255,.22);
-      padding:18px 20px;
-      border-radius:18px;
-      box-shadow:0 12px 25px rgba(0,0,0,.35);
-      backdrop-filter:blur(10px);
-      text-align:center;
-      animation:cutePop .9s ease;
+      padding:18px 20px;border-radius:18px;box-shadow:0 12px 25px rgba(0,0,0,.35);
+      backdrop-filter:blur(10px);text-align:center;animation:cutePop .9s ease;
     }
-
-    .message .title{
-      font-size:20px;
-      font-weight:900;
-      color:#ffe9b3;
-      margin-bottom:6px;
-    }
-
-    .message .sub{
-      font-size:16px;
-      font-weight:600;
-      line-height:1.55;
-      color:rgba(255,255,255,.95);
-    }
+    .message .title{font-size:20px;font-weight:900;color:#ffe9b3;margin-bottom:6px;}
+    .message .sub{font-size:16px;font-weight:600;line-height:1.55;color:rgba(255,255,255,.95);}
 
     .finalLine{
       margin: 18px auto 0;
@@ -333,20 +293,8 @@
       animation: fadeInUp 1s ease forwards;
     }
 
-    .sparkBurst{
-      position:absolute;
-      inset:0;
-      display:none;
-      pointer-events:none;
-      z-index:3;
-    }
-
-    .spark{
-      position:absolute;
-      font-size:24px;
-      animation:burst 900ms ease-out forwards;
-      opacity:0;
-    }
+    .sparkBurst{position:absolute;inset:0;display:none;pointer-events:none;z-index:3;}
+    .spark{position:absolute;font-size:24px;animation:burst 900ms ease-out forwards;opacity:0;}
 
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
     @keyframes pulseGlow{0%,100%{filter:drop-shadow(0 15px 25px rgba(0,0,0,.55))}50%{filter:drop-shadow(0 18px 35px rgba(255,255,255,.18))}}
@@ -401,6 +349,18 @@
       85%  { transform: translateX(150vw) translateY(-5px)  rotate(-2deg) scale(1.0); }
       100% { transform: translateX(210vw) translateY(10px)  rotate(2deg)  scale(0.96); }
     }
+
+    /* ✅ MOBILE scaling: keeps everything inside the screen */
+    @media (max-width:520px), (max-height:760px){
+      .box{ font-size: 150px; }
+      .hint{ font-size: 15px; }
+      .unlockText{ font-size: 17px; }
+      .unlockTip{ font-size: 14px; }
+      .trees{ font-size: 18px; }
+      .card .cap{ font-size: 14px; }
+      .pants img{ width: 135px; }
+      .message .sub{ font-size: 15px; }
+    }
   </style>
 </head>
 
@@ -419,11 +379,6 @@
       <div id="unlockText" class="unlockText">✨ A mystery is waiting...</div>
       <div id="unlockTip" class="unlockTip">Tap to reveal 💛</div>
       <div id="trees" class="trees">❄️❄️❄️❄️❄️</div>
-    </div>
-
-    <div id="tapCard" class="card">
-      <img id="tapImg" src="" alt="tap image">
-      <div id="tapCap" class="cap"></div>
     </div>
 
     <div id="sparkBurst" class="sparkBurst"></div>
@@ -449,7 +404,19 @@
     </div>
   </div>
 
+  <!-- ✅ MODAL OVERLAY CARD (doesn't push layout) -->
+  <div id="cardOverlay" class="cardOverlay">
+    <div id="tapCard" class="card">
+      <button class="closeBtn" id="closeCard" aria-label="Close">✕</button>
+      <img id="tapImg" src="" alt="tap image">
+      <div id="tapCap" class="cap"></div>
+    </div>
+  </div>
+
   <script>
+    // lock scroll until first tap (keeps perfect center)
+    document.body.classList.add("locked");
+
     ["wife.jpg","cat.jpg","pants1.jpg","pants2.jpg","sleigh.png"].forEach(src => {
       const img = new Image();
       img.src = src;
@@ -497,6 +464,20 @@
       sleigh.classList.add("fly");
     }
 
+    // Modal open/close
+    const cardOverlay = document.getElementById("cardOverlay");
+    const closeCard = document.getElementById("closeCard");
+    function showCard(){
+      cardOverlay.style.display = "flex";
+    }
+    function hideCard(){
+      cardOverlay.style.display = "none";
+    }
+    closeCard.addEventListener("click", hideCard);
+    cardOverlay.addEventListener("click", (e) => {
+      if (e.target === cardOverlay) hideCard();
+    });
+
     function openGift() {
       tapCount++;
 
@@ -505,12 +486,12 @@
       const unlockUI = document.getElementById("unlockUI");
       const unlockText = document.getElementById("unlockText");
       const unlockTip = document.getElementById("unlockTip");
-      const card = document.getElementById("tapCard");
       const tapImg = document.getElementById("tapImg");
       const tapCap = document.getElementById("tapCap");
       const trees = document.getElementById("trees");
 
       if (tapCount === 1) {
+        document.body.classList.remove("locked"); // ✅ allow scroll after tap if needed
         hint.style.display = "none";
         unlockUI.style.display = "block";
       }
@@ -537,7 +518,7 @@
         unlockText.textContent = "🎁 Your gift is on the way to you 💛";
         unlockTip.textContent = "Santa’s sleigh is delivering it 🎅✨";
 
-        card.style.display = "none";
+        hideCard();
         burstSparkles();
 
         setTimeout(() => {
@@ -554,13 +535,13 @@
       box.className = "box " + step.stage;
 
       if (step.showCard) {
-        card.style.display = "block";
         tapImg.style.opacity = "0";
         tapImg.src = step.img;
         tapImg.onload = () => { tapImg.style.opacity = "1"; };
         tapCap.innerHTML = step.cap;
+        showCard();
       } else {
-        card.style.display = "none";
+        hideCard();
       }
 
       if (step.unlockText) unlockText.textContent = step.unlockText;
@@ -579,7 +560,7 @@
     }
 
     const box = document.getElementById("giftBox");
-    box.addEventListener("touchstart", function(e){ e.preventDefault(); openGift(); });
+    box.addEventListener("touchstart", function(e){ e.preventDefault(); openGift(); }, {passive:false});
     box.addEventListener("click", openGift);
 
     function burstSparkles() {
