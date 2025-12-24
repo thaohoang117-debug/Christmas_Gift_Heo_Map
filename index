@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Christmas Surprise 🎄</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(#0f5132, #198754);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      color: white;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .box {
+      font-size: 200px; /* BIG CHRISTMAS BOX */
+      cursor: pointer;
+      animation: bounce 1.5s infinite;
+      text-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+
+    .hint {
+      font-size: 18px;
+      margin-top: 10px;
+      opacity: 0.95;
+    }
+
+    .content {
+      display: none;
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    .pants {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pants img {
+      width: 150px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+      background: white;
+    }
+
+    .message {
+      margin-top: 24px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff3cd;
+      line-height: 1.4;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- CLOSED BOX -->
+    <div id="giftBox" class="box">
+      🎁
+    </div>
+    <div id="hint" class="hint">🎄 Tap to open your Christmas gift 🎄</div>
+
+    <!-- OPENED CONTENT -->
+    <div id="giftContent" class="content">
+      <div class="pants">
+        <!-- CHANGE THESE IMAGE FILE NAMES -->
+        <img src="pants1.jpg" alt="Pants 1">
+        <img src="pants2.jpg" alt="Pants 2">
+      </div>
+
+      <div class="message">
+        🎄 Your real gift is on the way!! 🎄<br>
+        Love you Mập địt 🐷
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function openGift() {
+      document.getElementById("giftBox").style.display = "none";
+      document.getElementById("hint").style.display = "none";
+      document.getElementById("giftContent").style.display = "block";
+    }
+
+    const box = document.getElementById("giftBox");
+
+    // Mobile + desktop support
+    box.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      openGift();
+    });
+
+    box.addEventListener("click", openGift);
+  </script>
+
+</body>
+</html>
