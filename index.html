@@ -8,10 +8,10 @@
   <style>
     body{
       margin:0;
-      min-height:100svh;                 /* ✅ stable viewport on iPhone */
+      min-height:100svh;
       height:auto;
       overflow-x:hidden;
-      overflow-y:auto;                   /* ✅ scroll only if needed */
+      overflow-y:auto;
       background:radial-gradient(circle at top,#1c7c54,#0f3624);
       display:flex;
       justify-content:center;
@@ -26,16 +26,15 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
 
-    body.locked{ overflow:hidden; }      /* ✅ lock scroll before tap */
+    body.locked{ overflow:hidden; }
 
     canvas{position:absolute;inset:0;z-index:1;pointer-events:none;}
 
-    /* ✅ FIXED CENTER LAYOUT */
     .container{
       position:relative;
       z-index:2;
       width:min(92vw,520px);
-      min-height:100svh;                 /* ✅ full viewport height */
+      min-height:100svh;
       display:flex;
       flex-direction:column;
       justify-content:center;
@@ -132,20 +131,15 @@
       animation:float 2.4s ease-in-out infinite,pulseGlow 2.8s ease-in-out infinite;
       filter:drop-shadow(0 15px 25px rgba(0,0,0,.55));
     }
-
     .box::after{
       content:"";
       position:absolute;
-      top:50%;
-      left:50%;
-      width:210px;
-      height:210px;
+      top:50%;left:50%;
+      width:210px;height:210px;
       transform:translate(-50%,-50%);
       border-radius:50%;
       background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);
-      filter:blur(12px);
-      opacity:.75;
-      z-index:-1;
+      filter:blur(12px);opacity:.75;z-index:-1;
       animation:aura 2.6s ease-in-out infinite;
     }
 
@@ -173,12 +167,7 @@
     @keyframes w3{0%,100%{transform:scale(1.07) rotate(0)}25%{transform:scale(1.1) rotate(-5deg)}50%{transform:scale(1.1) rotate(5deg)}75%{transform:scale(1.09) rotate(-4deg)}}
     @keyframes w4{0%,100%{transform:scale(1.1) rotate(0)}20%{transform:scale(1.15) rotate(-10deg)}50%{transform:scale(1.15) rotate(10deg)}80%{transform:scale(1.12) rotate(-8deg)}}
 
-    .hint{
-      font-size:17px;
-      margin-top:12px;
-      opacity:.95;
-      text-shadow:0 6px 14px rgba(0,0,0,.35);
-    }
+    .hint{font-size:17px;margin-top:12px;opacity:.95;text-shadow:0 6px 14px rgba(0,0,0,.35);}
 
     .unlockUI{
       margin-top:14px;
@@ -190,9 +179,7 @@
     .unlockTip{font-size:15px;margin-top:10px;opacity:.95;}
     .trees{margin-top:10px;font-size:20px;letter-spacing:4px;opacity:0.95;text-shadow:0 6px 14px rgba(0,0,0,.25);}
 
-    /* ======================================================
-       ✅ OVERLAY MODAL CARD (doesn't push layout down)
-    ====================================================== */
+    /* ✅ MODAL CARD OVERLAY (tap image closes automatically) */
     .cardOverlay{
       position:fixed;
       inset:0;
@@ -213,7 +200,6 @@
       box-shadow: 0 12px 25px rgba(0,0,0,0.35);
       backdrop-filter: blur(10px);
       animation: fadeInUp .5s ease forwards;
-      position:relative;
     }
     .card img{
       width: 100%;
@@ -222,30 +208,9 @@
       background:white;
       display:block;
       transition: opacity 0.35s ease;
+      cursor:pointer; /* ✅ tap me */
     }
-    .card .cap{
-      margin-top: 10px;
-      font-size: 16px;
-      font-weight: 800;
-      color:#fff3cd;
-      line-height: 1.4;
-    }
-
-    .closeBtn{
-      position:absolute;
-      top:10px;
-      right:10px;
-      width:36px;
-      height:36px;
-      border-radius:50%;
-      border:none;
-      background: rgba(0,0,0,0.35);
-      color:#fff;
-      font-size:20px;
-      cursor:pointer;
-      display:grid;
-      place-items:center;
-    }
+    .card .cap{margin-top: 10px;font-size: 16px;font-weight: 800;color:#fff3cd;line-height: 1.4;}
 
     .bubble{
       position:absolute;left:50%;top:16%;transform:translateX(-50%);
@@ -258,14 +223,7 @@
       100%{opacity:0;transform:translateX(-50%) translateY(-55px) scale(1.2)}
     }
 
-    .content{
-      display:none;
-      animation:fadeInUp .8s ease forwards;
-      width:100%;
-      max-width:520px;
-      margin:0 auto;
-    }
-
+    .content{display:none;animation:fadeInUp .8s ease forwards;width:100%;max-width:520px;margin:0 auto;}
     .pants{display:flex;gap:20px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
     .pants img{
       width:150px;border-radius:16px;box-shadow:0 10px 18px rgba(0,0,0,.45);
@@ -307,9 +265,7 @@
       100%{transform:translate(var(--x),var(--y)) scale(1.2);opacity:0}
     }
 
-    /* ================================
-       🎅 SLEIGH
-    ================================== */
+    /* 🎅 SLEIGH */
     .sleigh{
       position:absolute;
       top: 45%;
@@ -350,7 +306,7 @@
       100% { transform: translateX(210vw) translateY(10px)  rotate(2deg)  scale(0.96); }
     }
 
-    /* ✅ MOBILE scaling: keeps everything inside the screen */
+    /* ✅ MOBILE scaling */
     @media (max-width:520px), (max-height:760px){
       .box{ font-size: 150px; }
       .hint{ font-size: 15px; }
@@ -404,17 +360,16 @@
     </div>
   </div>
 
-  <!-- ✅ MODAL OVERLAY CARD (doesn't push layout) -->
+  <!-- ✅ MODAL OVERLAY (tap image closes) -->
   <div id="cardOverlay" class="cardOverlay">
     <div id="tapCard" class="card">
-      <button class="closeBtn" id="closeCard" aria-label="Close">✕</button>
       <img id="tapImg" src="" alt="tap image">
       <div id="tapCap" class="cap"></div>
     </div>
   </div>
 
   <script>
-    // lock scroll until first tap (keeps perfect center)
+    // Lock scroll until first tap (keeps perfect center)
     document.body.classList.add("locked");
 
     ["wife.jpg","cat.jpg","pants1.jpg","pants2.jpg","sleigh.png"].forEach(src => {
@@ -464,21 +419,35 @@
       sleigh.classList.add("fly");
     }
 
-    // Modal open/close
+    // ✅ MODAL state: prevent box tap while modal open
+    let waitingForModalClose = false;
+
     const cardOverlay = document.getElementById("cardOverlay");
-    const closeCard = document.getElementById("closeCard");
-    function showCard(){
+    const tapImg = document.getElementById("tapImg");
+    const tapCap = document.getElementById("tapCap");
+
+    function showCard(step){
+      tapImg.style.opacity = "0";
+      tapImg.src = step.img;
+      tapImg.onload = () => { tapImg.style.opacity = "1"; };
+      tapCap.innerHTML = step.cap;
       cardOverlay.style.display = "flex";
+      waitingForModalClose = true;
     }
+
     function hideCard(){
       cardOverlay.style.display = "none";
+      waitingForModalClose = false;
     }
-    closeCard.addEventListener("click", hideCard);
-    cardOverlay.addEventListener("click", (e) => {
-      if (e.target === cardOverlay) hideCard();
-    });
+
+    // Tap anywhere on overlay or image closes
+    cardOverlay.addEventListener("click", hideCard);
+    tapImg.addEventListener("click", hideCard);
 
     function openGift() {
+      // ✅ If modal is open, box taps do nothing
+      if(waitingForModalClose) return;
+
       tapCount++;
 
       const box = document.getElementById("giftBox");
@@ -486,12 +455,10 @@
       const unlockUI = document.getElementById("unlockUI");
       const unlockText = document.getElementById("unlockText");
       const unlockTip = document.getElementById("unlockTip");
-      const tapImg = document.getElementById("tapImg");
-      const tapCap = document.getElementById("tapCap");
       const trees = document.getElementById("trees");
 
       if (tapCount === 1) {
-        document.body.classList.remove("locked"); // ✅ allow scroll after tap if needed
+        document.body.classList.remove("locked");
         hint.style.display = "none";
         unlockUI.style.display = "block";
       }
@@ -500,6 +467,7 @@
         "🎄".repeat(Math.min(tapCount, TOTAL_TAPS)) +
         "❄️".repeat(Math.max(0, TOTAL_TAPS - tapCount));
 
+      // 🕯️ Candle mode stays on tap #3 + #4
       if (tapCount === 3 || tapCount === 4) {
         document.body.classList.add("candleMode");
         box.classList.add("candleLit");
@@ -508,6 +476,7 @@
         box.classList.remove("candleLit");
       }
 
+      // ✅ FINAL
       if (tapCount >= TOTAL_TAPS) {
         document.body.classList.remove("candleMode");
         box.classList.remove("candleLit");
@@ -530,23 +499,21 @@
         return;
       }
 
+      // ✅ Normal step
       const step = steps[tapCount - 1];
       box.textContent = step.emoji;
       box.className = "box " + step.stage;
 
-      if (step.showCard) {
-        tapImg.style.opacity = "0";
-        tapImg.src = step.img;
-        tapImg.onload = () => { tapImg.style.opacity = "1"; };
-        tapCap.innerHTML = step.cap;
-        showCard();
-      } else {
-        hideCard();
-      }
-
       if (step.unlockText) unlockText.textContent = step.unlockText;
       if (step.unlockTip) unlockTip.textContent = step.unlockTip;
       if (step.bubble) showBubble(step.bubble);
+
+      // ✅ If step has image → show modal
+      if (step.showCard) {
+        showCard(step);
+      } else {
+        hideCard();
+      }
 
       if (navigator.vibrate) navigator.vibrate(40);
     }
